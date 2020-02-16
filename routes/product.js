@@ -59,12 +59,24 @@ router.post("/uploadProduct",Authentication,(req, res) => {
 //get all produc
 ///api/product/getProducts
 
-router.get("/getProducts",Authentication,(req, res) => {
+router.post("/getProducts",Authentication,(req, res) => {
  
+
+    let order = req.body.order ? req.body.order : "desc";
+    let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+    let limit = req.body.limit ? parseInt(req.body.limit) : 100;
+    let skip = parseInt(req.body.skip);
+
+
     Product.find()
+    .populate("writer")
+            .sort([[sortBy, order]])
+            .skip(skip)
+            .limit(limit)
     .exec((err,products)=>{
         if(err) return res.status(400).json({success:false,err})
-         res.status(200).json({success:true,products})
+         res.status(200).json({success:true,products,postSize:products.length})
+       
     })
    
  

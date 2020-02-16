@@ -9,17 +9,33 @@ import ImageSlider  from './utills/imageSlider';
 
 function Home (){
 const [Products,setProducts]=useState([])
-const [skip,setSkip]=useState(0)
-const [limite,setLimite]=useState(8)
+const [Skip,setSkip]=useState(0)
+const [Limit,setLimit]=useState(8)
+const [PostSize,setPostSize]=useState(0)
 
 
 
 useEffect(()=>{
-  Axios.get('/api/product/getProducts')
+  
+  const varibles={
+    skip:Skip,
+    limit:Limit
+  }
+  // console.log(varibles)
+  getProduct(varibles)
+
+},[])
+
+//this function call limit data and show 8 data 
+const getProduct=(varibles)=>{
+  // console.log(varibles)
+  Axios.post('/api/product/getProducts',varibles)
   .then(response=>{
-         
+         console.log(response)
     if(response.data.success){
-      setProducts(response.data.products)
+      setProducts([...Products,...response.data.products])
+
+      setPostSize(response.data.postSize)
         
     }
     // else{
@@ -30,15 +46,22 @@ useEffect(()=>{
   .catch(err=>{
     console.log(err)
   })
-
-},[])
-
-
+  
+}
 
 
 
+
+//when this function call then show 8 data + more data
 const loadMore=()=>{
-  let skip=skip+limite
+  let skip=Skip+Limit;
+
+  const varibles={
+    skip:skip,
+    limit:Limit
+  }
+  getProduct(varibles)
+  setSkip(skip)
 }
 
 
@@ -88,9 +111,15 @@ const renderCards = Products.map((product, index) => {
          
                  
             }
-  <div style={{display:'flex',justifyContent:'center'}}>
-    <button onClick={loadMore}>Load More</button>
-  </div>
+            <br></br>
+
+            {
+              PostSize >= Limit &&
+              <div style={{display:'flex',justifyContent:'center'}}>
+              <button onClick={loadMore}>Load More</button>
+            </div>
+            }
+ 
       
     </div>
   )

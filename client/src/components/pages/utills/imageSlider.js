@@ -41,7 +41,7 @@ function ImageSlider(props) {
     {props.images.map((image, index) => (
       
          <div className="carousel-item active" key={index}>
-         <img className="d-block " 
+         <img className="d-block " style={{ width: '100%',height:'200px', }}
         src={`http://localhost:5000/${image}`} alt="product" />
 
        </div>
